@@ -24,29 +24,20 @@ title.TextColor3 = Color3.new(1, 1, 1)
 title.Font = Enum.Font.GothamBold
 title.TextSize = 18
 
--- Move GUI with drag
-local dragging = false
-local dragInput, startPos, startSize
+-- Coordinates Display
+local coordLabel = Instance.new("TextLabel", Frame)
+coordLabel.Size = UDim2.new(1, -20, 0, 30)
+coordLabel.Position = UDim2.new(0, 10, 0, 160)
+coordLabel.BackgroundTransparency = 1
+coordLabel.TextColor3 = Color3.new(1, 1, 1)
+coordLabel.Font = Enum.Font.Gotham
+coordLabel.TextSize = 14
+coordLabel.Text = "Coordinates: X: 0 Y: 0 Z: 0"
 
-Frame.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then
-        dragging = true
-        startPos = input.Position
-        startSize = Frame.Position
-    end
-end)
-
-Frame.InputChanged:Connect(function(input)
-    if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-        local delta = input.Position - startPos
-        Frame.Position = startSize + UDim2.new(0, delta.X, 0, delta.Y)
-    end
-end)
-
-Frame.InputEnded:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then
-        dragging = false
-    end
+-- Update the coordinate display in real-time
+game:GetService("RunService").RenderStepped:Connect(function()
+    local position = hrp.Position
+    coordLabel.Text = string.format("Coordinates: X: %.2f Y: %.2f Z: %.2f", position.X, position.Y, position.Z)
 end)
 
 -- WalkSpeed Slider
@@ -92,7 +83,7 @@ game:GetService("UserInputService").JumpRequest:Connect(function()
     end
 end)
 
--- Teleport to Finish Button with Random Delay to Avoid Detection
+-- Teleport to Finish Button
 local teleportBtn = Instance.new("TextButton", Frame)
 teleportBtn.Text = "Teleport to Finish"
 teleportBtn.Size = UDim2.new(1, -20, 0, 30)
@@ -103,26 +94,6 @@ teleportBtn.Font = Enum.Font.GothamBold
 teleportBtn.TextSize = 14
 
 teleportBtn.MouseButton1Click:Connect(function()
-    -- Add random delay to avoid detection
-    wait(math.random(1, 3))  -- Random delay between 1 to 3 seconds before teleporting
-    -- Coordinates for finish line
-    hrp.CFrame = CFrame.new(Vector3.new(-339.12, 10.00, 553.27))  -- Adjusted Y to 10
+    -- Teleporting to the correct finish line coordinates with Y = 10.00
+    hrp.CFrame = CFrame.new(Vector3.new(-339.12, 10.00, 553.27))
 end)
-
--- Resize GUI
-local resizeBtn = Instance.new("TextButton", Frame)
-resizeBtn.Text = "Resize"
-resizeBtn.Size = UDim2.new(1, -20, 0, 30)
-resizeBtn.Position = UDim2.new(0, 10, 0, 160)
-resizeBtn.BackgroundColor3 = Color3.new(0.3, 0.1, 0.1)
-resizeBtn.TextColor3 = Color3.new(1, 1, 1)
-resizeBtn.Font = Enum.Font.GothamBold
-resizeBtn.TextSize = 14
-
-resizeBtn.MouseButton1Click:Connect(function()
-    -- Resize GUI
-    Frame.Size = UDim2.new(0, math.random(150, 300), 0, math.random(150, 250))
-end)
-
--- Add random delay to reset detection behavior
-wait(math.random(5, 10))  -- Wait before resetting the script or before taking any further actions
