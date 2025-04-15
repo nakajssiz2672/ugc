@@ -1,11 +1,11 @@
--- Wait 1 Year for Free UGC - GUI Script
+-- Generic GUI Script
 local player = game.Players.LocalPlayer
 local char = player.Character or player.CharacterAdded:Wait()
 local hrp = char:WaitForChild("HumanoidRootPart")
 
 -- UI Setup
 local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
-ScreenGui.Name = "UGCObbyGui"
+ScreenGui.Name = "CustomGui"
 
 local Frame = Instance.new("Frame", ScreenGui)
 Frame.Size = UDim2.new(0, 250, 0, 200)
@@ -17,7 +17,7 @@ local UICorner = Instance.new("UICorner", Frame)
 UICorner.CornerRadius = UDim.new(0, 10)
 
 local title = Instance.new("TextLabel", Frame)
-title.Text = "UGC Obby Script"
+title.Text = "Custom Script Controls"
 title.Size = UDim2.new(1, 0, 0, 30)
 title.BackgroundTransparency = 1
 title.TextColor3 = Color3.new(1, 1, 1)
@@ -83,9 +83,9 @@ game:GetService("UserInputService").JumpRequest:Connect(function()
     end
 end)
 
--- Teleport to Finish Button
+-- Teleport to Custom Point Button
 local teleportBtn = Instance.new("TextButton", Frame)
-teleportBtn.Text = "Teleport to Finish"
+teleportBtn.Text = "Teleport to Point"
 teleportBtn.Size = UDim2.new(1, -20, 0, 30)
 teleportBtn.Position = UDim2.new(0, 10, 0, 120)
 teleportBtn.BackgroundColor3 = Color3.new(0.3, 0.1, 0.1)
@@ -94,8 +94,9 @@ teleportBtn.Font = Enum.Font.GothamBold
 teleportBtn.TextSize = 14
 
 teleportBtn.MouseButton1Click:Connect(function()
-    -- Teleporting to the correct finish line coordinates with Y = 10.00
-    hrp.CFrame = CFrame.new(Vector3.new(-339.12, 10.00, 553.27))
+    -- Teleporting to a custom point (can be adjusted)
+    local customPoint = Vector3.new(-339.12, 10.00, 553.27) -- Replace with your desired teleport location
+    hrp.CFrame = CFrame.new(customPoint)
 end)
 
 -- Create buttons to resize the GUI
