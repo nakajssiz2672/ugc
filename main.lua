@@ -1,9 +1,8 @@
 -- Anti-Cheat Bypass Script (Flying + Environmental Detection)
 
 local teleportLocation = Vector3.new(-339.12, 10, 553.27)  -- Your teleport coordinates
-local flySpeed = 50  -- Speed at which the player flies (adjust as needed)
-local flyHeight = 50  -- Height to fly at (you can adjust this)
-local teleportDelay = 2  -- Time in seconds before teleportation starts
+local flySpeed = 10  -- Flying speed
+local teleportDelay = 1  -- Time before flying starts
 local player = game.Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 local humanoid = character:WaitForChild("Humanoid")
@@ -17,7 +16,7 @@ local function avoidKillParts()
 
         for _, part in ipairs(partsInRegion) do
             if part:IsA("BasePart") and part.Name:match("Kill") then
-                -- Avoid kill part by moving away
+                -- Avoid kill part by stopping movement or teleporting
                 humanoid:MoveTo(character.HumanoidRootPart.Position + Vector3.new(5, 0, 0))  -- Move away from the danger
                 break
             end
@@ -30,29 +29,32 @@ local function avoidKillParts()
     end
 end
 
--- Function to fly smoothly to the destination without falling
+-- Fly to the target location using BodyVelocity
 local function flyToDestination()
+    -- Create a BodyVelocity to simulate flying
     local bodyVelocity = Instance.new("BodyVelocity")
-    bodyVelocity.MaxForce = Vector3.new(100000, 100000, 100000)  -- Allow movement in all directions
-    bodyVelocity.Velocity = Vector3.new(0, flyHeight, 0)  -- Keep a constant height while flying
+    bodyVelocity.MaxForce = Vector3.new(500000, 500000, 500000)  -- Ensure it has enough force to move
+    bodyVelocity.Velocity = Vector3.new(0, 0, 0)  -- Start with no movement
     bodyVelocity.Parent = rootPart
-
-    -- Fly towards the target location
-    local direction = (teleportLocation - rootPart.Position).unit
-    bodyVelocity.Velocity = direction * flySpeed  -- Adjust the speed of flying towards the target
-
-    wait(teleportDelay)  -- Wait before starting the fly movement
     
-    -- Smooth flight to the target location
-    while (rootPart.Position - teleportLocation).Magnitude > 1 do
-        bodyVelocity.Velocity = direction * flySpeed
-        wait(0.05)  -- Small delay to keep movement smooth
+    -- Function to smoothly fly to the destination
+    local function moveSmoothly(targetPosition)
+        local direction = (targetPosition - rootPart.Position).unit
+        while (rootPart.Position - targetPosition).Magnitude > 1 do
+            bodyVelocity.Velocity = direction * flySpeed  -- Fly towards the target with the given speed
+            wait(0.03)  -- Smooth flight update
+        end
+        bodyVelocity:Destroy()  -- Stop flying once the target is reached
     end
-    
-    bodyVelocity:Destroy()  -- Remove the BodyVelocity once the destination is reached
+
+    -- Wait before starting to fly
+    wait(teleportDelay)
+
+    -- Start flying to the target location
+    moveSmoothly(teleportLocation)
 end
 
--- Main function to initiate the flying and hazard detection
+-- Main function to initiate flying and hazard detection
 local function main()
     -- Start environmental hazard detection
     spawn(avoidKillParts)
