@@ -1,9 +1,9 @@
--- Anti-Cheat Bypass Script (Movement + Auto-Teleportation)
+-- Anti-Cheat Bypass Script (Flying + Environmental Detection)
 
 local teleportLocation = Vector3.new(-339.12, 10, 553.27)  -- Your teleport coordinates
-local teleportDelay = 2  -- Time in seconds before teleportation occurs
-local teleportDuration = 2  -- Duration of the smooth teleportation (seconds)
-
+local flySpeed = 50  -- Speed at which the player flies (adjust as needed)
+local flyHeight = 50  -- Height to fly at (you can adjust this)
+local teleportDelay = 2  -- Time in seconds before teleportation starts
 local player = game.Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 local humanoid = character:WaitForChild("Humanoid")
@@ -17,7 +17,7 @@ local function avoidKillParts()
 
         for _, part in ipairs(partsInRegion) do
             if part:IsA("BasePart") and part.Name:match("Kill") then
-                -- Avoid kill part by stopping movement or teleporting
+                -- Avoid kill part by moving away
                 humanoid:MoveTo(character.HumanoidRootPart.Position + Vector3.new(5, 0, 0))  -- Move away from the danger
                 break
             end
@@ -30,34 +30,35 @@ local function avoidKillParts()
     end
 end
 
--- Function to smoothly move to the destination over time
-local function moveSmoothly(targetPosition)
-    local startPos = rootPart.Position
-    local startTime = tick()
-    local endTime = startTime + teleportDuration
+-- Function to fly smoothly to the destination without falling
+local function flyToDestination()
+    local bodyVelocity = Instance.new("BodyVelocity")
+    bodyVelocity.MaxForce = Vector3.new(100000, 100000, 100000)  -- Allow movement in all directions
+    bodyVelocity.Velocity = Vector3.new(0, flyHeight, 0)  -- Keep a constant height while flying
+    bodyVelocity.Parent = rootPart
 
-    while tick() < endTime do
-        local alpha = (tick() - startTime) / teleportDuration
-        rootPart.CFrame = CFrame.new(startPos:Lerp(targetPosition, alpha))  -- Smoothly move using Lerp
-        wait(0.03)  -- Small delay to make the movement smooth
+    -- Fly towards the target location
+    local direction = (teleportLocation - rootPart.Position).unit
+    bodyVelocity.Velocity = direction * flySpeed  -- Adjust the speed of flying towards the target
+
+    wait(teleportDelay)  -- Wait before starting the fly movement
+    
+    -- Smooth flight to the target location
+    while (rootPart.Position - teleportLocation).Magnitude > 1 do
+        bodyVelocity.Velocity = direction * flySpeed
+        wait(0.05)  -- Small delay to keep movement smooth
     end
-
-    rootPart.CFrame = CFrame.new(targetPosition)  -- Ensure final position is exact
+    
+    bodyVelocity:Destroy()  -- Remove the BodyVelocity once the destination is reached
 end
 
--- Function to initiate teleportation after the delay
-local function teleportToDestination()
-    wait(teleportDelay)  -- Wait for the initial delay before teleporting
-    moveSmoothly(teleportLocation)  -- Move smoothly to the target location
-end
-
--- Main script to handle teleportation and environmental detection
+-- Main function to initiate the flying and hazard detection
 local function main()
     -- Start environmental hazard detection
     spawn(avoidKillParts)
 
-    -- Teleport the player after the specified delay
-    teleportToDestination()
+    -- Start flying after the delay
+    flyToDestination()
 end
 
 main()
