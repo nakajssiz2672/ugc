@@ -2,10 +2,12 @@
 
 local teleportLocation = Vector3.new(-339.12, 10, 553.27)  -- Your teleport coordinates
 local teleportDelay = 2  -- Time in seconds before teleportation occurs
+local teleportDuration = 2  -- Duration of the smooth teleportation (seconds)
 
 local player = game.Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 local humanoid = character:WaitForChild("Humanoid")
+local rootPart = character:WaitForChild("HumanoidRootPart")
 
 -- Function to detect and avoid environmental hazards like kill parts
 local function avoidKillParts()
@@ -28,16 +30,25 @@ local function avoidKillParts()
     end
 end
 
--- Function to teleport to the designated location with smooth animation
-local function teleportToDestination()
-    local distance = (teleportLocation - character.HumanoidRootPart.Position).magnitude
-    local direction = (teleportLocation - character.HumanoidRootPart.Position).unit
-    local speed = 50  -- Speed at which teleport occurs (higher = faster)
+-- Function to smoothly move to the destination over time
+local function moveSmoothly(targetPosition)
+    local startPos = rootPart.Position
+    local startTime = tick()
+    local endTime = startTime + teleportDuration
 
-    for i = 1, distance, speed do
-        character:TranslateBy(direction * speed)
-        wait(0.05)
+    while tick() < endTime do
+        local alpha = (tick() - startTime) / teleportDuration
+        rootPart.CFrame = CFrame.new(startPos:Lerp(targetPosition, alpha))  -- Smoothly move using Lerp
+        wait(0.03)  -- Small delay to make the movement smooth
     end
+
+    rootPart.CFrame = CFrame.new(targetPosition)  -- Ensure final position is exact
+end
+
+-- Function to initiate teleportation after the delay
+local function teleportToDestination()
+    wait(teleportDelay)  -- Wait for the initial delay before teleporting
+    moveSmoothly(teleportLocation)  -- Move smoothly to the target location
 end
 
 -- Main script to handle teleportation and environmental detection
@@ -45,10 +56,7 @@ local function main()
     -- Start environmental hazard detection
     spawn(avoidKillParts)
 
-    -- Wait for the delay before teleportation happens
-    wait(teleportDelay)
-    
-    -- Teleport player smoothly to the desired position
+    -- Teleport the player after the specified delay
     teleportToDestination()
 end
 
