@@ -1,8 +1,8 @@
 -- Anti-Cheat Bypass Script (Flying + Environmental Detection + Noclip)
 
 local teleportLocation = Vector3.new(-339.12, 10, 553.27)  -- Your teleport coordinates
-local flySpeed = 30  -- Flying speed
-local teleportDelay = q  -- Time before flying starts
+local flySpeed = 50  -- Flying speed
+local teleportDelay = 2  -- Time before flying starts
 local player = game.Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 local humanoid = character:WaitForChild("Humanoid")
@@ -40,22 +40,22 @@ local function enableNoclip()
     end
 end
 
--- Fly to the target location using BodyVelocity
+-- Function to fly smoothly through walls using BodyPosition
 local function flyToDestination()
-    -- Create a BodyVelocity to simulate flying
-    local bodyVelocity = Instance.new("BodyVelocity")
-    bodyVelocity.MaxForce = Vector3.new(500000, 500000, 500000)  -- Ensure it has enough force to move
-    bodyVelocity.Velocity = Vector3.new(0, 0, 0)  -- Start with no movement
-    bodyVelocity.Parent = rootPart
+    -- Create a BodyPosition object to simulate flying
+    local bodyPosition = Instance.new("BodyPosition")
+    bodyPosition.MaxForce = Vector3.new(500000, 500000, 500000)  -- Ensure enough force to move the character
+    bodyPosition.D = 500  -- Damping to smooth out the movement
+    bodyPosition.P = 10000  -- Strength of the force applied
+    bodyPosition.Parent = rootPart
 
     -- Function to smoothly fly to the destination
     local function moveSmoothly(targetPosition)
-        local direction = (targetPosition - rootPart.Position).unit
         while (rootPart.Position - targetPosition).Magnitude > 1 do
-            bodyVelocity.Velocity = direction * flySpeed  -- Fly towards the target with the given speed
-            wait(0.03)  -- Smooth flight update
+            bodyPosition.Position = targetPosition  -- Set the target position for smooth flying
+            wait(0.03)  -- Update movement every 0.03 seconds
         end
-        bodyVelocity:Destroy()  -- Stop flying once the target is reached
+        bodyPosition:Destroy()  -- Stop flying once the target is reached
     end
 
     -- Wait before starting to fly
