@@ -1,3 +1,11 @@
+-- Anti-detection setup
+local function antiDetection()
+    -- Simple environment check to hide the GUI from CoreGui if detected
+    if game:GetService("CoreGui"):FindFirstChild("UGCObbyGui") then
+        game:GetService("CoreGui"):FindFirstChild("UGCObbyGui"):Destroy()
+    end
+end
+
 -- Wait 1 Year for Free UGC - GUI Script
 local player = game.Players.LocalPlayer
 local char = player.Character or player.CharacterAdded:Wait()
@@ -81,3 +89,9 @@ teleportBtn.MouseButton1Click:Connect(function()
     -- Replace these with actual finish coordinates
     hrp.CFrame = CFrame.new(Vector3.new(1000, 20, 1000))
 end)
+
+-- Anti-detection loop
+while true do
+    antiDetection()
+    wait(1)
+end
