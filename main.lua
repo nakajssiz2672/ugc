@@ -7,7 +7,6 @@ local player = game.Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 local humanoid = character:WaitForChild("Humanoid")
 local rootPart = character:WaitForChild("HumanoidRootPart")
-local primaryPart = character:WaitForChild("PrimaryPart")
 
 -- Function to detect and avoid environmental hazards like kill parts
 local function avoidKillParts()
@@ -40,22 +39,22 @@ local function enableNoclip()
     end
 end
 
--- Function to fly smoothly through walls using BodyPosition
+-- Fly to the target location using BodyVelocity
 local function flyToDestination()
-    -- Create a BodyPosition object to simulate flying
-    local bodyPosition = Instance.new("BodyPosition")
-    bodyPosition.MaxForce = Vector3.new(500000, 500000, 500000)  -- Ensure enough force to move the character
-    bodyPosition.D = 500  -- Damping to smooth out the movement
-    bodyPosition.P = 10000  -- Strength of the force applied
-    bodyPosition.Parent = rootPart
-
+    -- Create a BodyVelocity to simulate flying
+    local bodyVelocity = Instance.new("BodyVelocity")
+    bodyVelocity.MaxForce = Vector3.new(500000, 500000, 500000)  -- Ensure it has enough force to move
+    bodyVelocity.Velocity = Vector3.new(0, 0, 0)  -- Start with no movement
+    bodyVelocity.Parent = rootPart
+    
     -- Function to smoothly fly to the destination
     local function moveSmoothly(targetPosition)
+        local direction = (targetPosition - rootPart.Position).unit
         while (rootPart.Position - targetPosition).Magnitude > 1 do
-            bodyPosition.Position = targetPosition  -- Set the target position for smooth flying
-            wait(0.03)  -- Update movement every 0.03 seconds
+            bodyVelocity.Velocity = direction * flySpeed  -- Fly towards the target with the given speed
+            wait(0.03)  -- Smooth flight update
         end
-        bodyPosition:Destroy()  -- Stop flying once the target is reached
+        bodyVelocity:Destroy()  -- Stop flying once the target is reached
     end
 
     -- Wait before starting to fly
