@@ -1,7 +1,30 @@
--- Generic GUI Script
+-- Generic GUI Script with Bypassable Anti-Cheat
+
 local player = game.Players.LocalPlayer
 local char = player.Character or player.CharacterAdded:Wait()
 local hrp = char:WaitForChild("HumanoidRootPart")
+local humanoid = char:WaitForChild("Humanoid")
+
+-- Bypass Toggle (set this to true to skip anti-cheat detection)
+local bypassAntiCheat = true
+
+-- Anti-Cheat Monitor
+if not bypassAntiCheat then
+    humanoid:GetPropertyChangedSignal("WalkSpeed"):Connect(function()
+        if humanoid.WalkSpeed > 32 then
+            player:Kick("Speed hack detected!")
+        end
+    end)
+
+    local lastPos = hrp.Position
+    game:GetService("RunService").Heartbeat:Connect(function()
+        local distance = (hrp.Position - lastPos).Magnitude
+        if distance > 50 then
+            player:Kick("Teleport hack detected!")
+        end
+        lastPos = hrp.Position
+    end)
+end
 
 -- UI Setup
 local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
@@ -34,7 +57,6 @@ coordLabel.Font = Enum.Font.Gotham
 coordLabel.TextSize = 14
 coordLabel.Text = "Coordinates: X: 0 Y: 0 Z: 0"
 
--- Update the coordinate display in real-time
 game:GetService("RunService").RenderStepped:Connect(function()
     local position = hrp.Position
     coordLabel.Text = string.format("Coordinates: X: %.2f Y: %.2f Z: %.2f", position.X, position.Y, position.Z)
@@ -94,12 +116,11 @@ teleportBtn.Font = Enum.Font.GothamBold
 teleportBtn.TextSize = 14
 
 teleportBtn.MouseButton1Click:Connect(function()
-    -- Teleporting to a custom point (can be adjusted)
-    local customPoint = Vector3.new(-339.12, 10.00, 553.27) -- Replace with your desired teleport location
+    local customPoint = Vector3.new(-339.12, 10.00, 553.27)
     hrp.CFrame = CFrame.new(customPoint)
 end)
 
--- Create buttons to resize the GUI
+-- GUI Resizer Buttons
 local smallerBtn = Instance.new("TextButton", Frame)
 smallerBtn.Text = "-"
 smallerBtn.Size = UDim2.new(0, 30, 0, 30)
@@ -135,3 +156,4 @@ end)
 largerBtn.MouseButton1Click:Connect(function()
     resizeGui(20)
 end)
+ 
