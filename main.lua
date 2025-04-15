@@ -24,6 +24,31 @@ title.TextColor3 = Color3.new(1, 1, 1)
 title.Font = Enum.Font.GothamBold
 title.TextSize = 18
 
+-- Move GUI with drag
+local dragging = false
+local dragInput, startPos, startSize
+
+Frame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        startPos = input.Position
+        startSize = Frame.Position
+    end
+end)
+
+Frame.InputChanged:Connect(function(input)
+    if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+        local delta = input.Position - startPos
+        Frame.Position = startSize + UDim2.new(0, delta.X, 0, delta.Y)
+    end
+end)
+
+Frame.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = false
+    end
+end)
+
 -- WalkSpeed Slider
 local speedSlider = Instance.new("TextButton", Frame)
 speedSlider.Text = "Speed: 16"
@@ -82,6 +107,21 @@ teleportBtn.MouseButton1Click:Connect(function()
     wait(math.random(1, 3))  -- Random delay between 1 to 3 seconds before teleporting
     -- Coordinates for finish line
     hrp.CFrame = CFrame.new(Vector3.new(-339.12, 10.00, 553.27))  -- Adjusted Y to 10
+end)
+
+-- Resize GUI
+local resizeBtn = Instance.new("TextButton", Frame)
+resizeBtn.Text = "Resize"
+resizeBtn.Size = UDim2.new(1, -20, 0, 30)
+resizeBtn.Position = UDim2.new(0, 10, 0, 160)
+resizeBtn.BackgroundColor3 = Color3.new(0.3, 0.1, 0.1)
+resizeBtn.TextColor3 = Color3.new(1, 1, 1)
+resizeBtn.Font = Enum.Font.GothamBold
+resizeBtn.TextSize = 14
+
+resizeBtn.MouseButton1Click:Connect(function()
+    -- Resize GUI
+    Frame.Size = UDim2.new(0, math.random(150, 300), 0, math.random(150, 250))
 end)
 
 -- Add random delay to reset detection behavior
