@@ -97,3 +97,40 @@ teleportBtn.MouseButton1Click:Connect(function()
     -- Teleporting to the correct finish line coordinates with Y = 10.00
     hrp.CFrame = CFrame.new(Vector3.new(-339.12, 10.00, 553.27))
 end)
+
+-- Create buttons to resize the GUI
+local smallerBtn = Instance.new("TextButton", Frame)
+smallerBtn.Text = "-"
+smallerBtn.Size = UDim2.new(0, 30, 0, 30)
+smallerBtn.Position = UDim2.new(0, 10, 0, 10)
+smallerBtn.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
+smallerBtn.TextColor3 = Color3.new(1, 1, 1)
+smallerBtn.Font = Enum.Font.Gotham
+smallerBtn.TextSize = 18
+
+local largerBtn = Instance.new("TextButton", Frame)
+largerBtn.Text = "+"
+largerBtn.Size = UDim2.new(0, 30, 0, 30)
+largerBtn.Position = UDim2.new(0, 50, 0, 10)
+largerBtn.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
+largerBtn.TextColor3 = Color3.new(1, 1, 1)
+largerBtn.Font = Enum.Font.Gotham
+largerBtn.TextSize = 18
+
+local function resizeGui(factor)
+    local currentWidth = Frame.Size.X.Offset
+    local currentHeight = Frame.Size.Y.Offset
+    local newWidth = currentWidth + factor
+    local newHeight = currentHeight + factor
+    if newWidth >= 150 and newWidth <= 400 then
+        Frame.Size = UDim2.new(0, newWidth, 0, newHeight)
+    end
+end
+
+smallerBtn.MouseButton1Click:Connect(function()
+    resizeGui(-20)
+end)
+
+largerBtn.MouseButton1Click:Connect(function()
+    resizeGui(20)
+end)
