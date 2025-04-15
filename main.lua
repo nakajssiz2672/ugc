@@ -24,10 +24,32 @@ title.TextColor3 = Color3.new(1, 1, 1)
 title.Font = Enum.Font.GothamBold
 title.TextSize = 18
 
+-- Resize Button
+local resizeBtn = Instance.new("TextButton", Frame)
+resizeBtn.Text = "Resize: Normal"
+resizeBtn.Size = UDim2.new(1, -20, 0, 30)
+resizeBtn.Position = UDim2.new(0, 10, 0, 160)
+resizeBtn.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
+resizeBtn.TextColor3 = Color3.new(1, 1, 1)
+resizeBtn.Font = Enum.Font.Gotham
+resizeBtn.TextSize = 14
+
+local isSmall = false
+resizeBtn.MouseButton1Click:Connect(function()
+    if isSmall then
+        Frame.Size = UDim2.new(0, 250, 0, 200)
+        resizeBtn.Text = "Resize: Normal"
+    else
+        Frame.Size = UDim2.new(0, 150, 0, 120)
+        resizeBtn.Text = "Resize: Small"
+    end
+    isSmall = not isSmall
+end)
+
 -- Coordinates Display
 local coordLabel = Instance.new("TextLabel", Frame)
 coordLabel.Size = UDim2.new(1, -20, 0, 30)
-coordLabel.Position = UDim2.new(0, 10, 0, 160)
+coordLabel.Position = UDim2.new(0, 10, 0, 120)
 coordLabel.BackgroundTransparency = 1
 coordLabel.TextColor3 = Color3.new(1, 1, 1)
 coordLabel.Font = Enum.Font.Gotham
@@ -87,7 +109,7 @@ end)
 local teleportBtn = Instance.new("TextButton", Frame)
 teleportBtn.Text = "Teleport to Finish"
 teleportBtn.Size = UDim2.new(1, -20, 0, 30)
-teleportBtn.Position = UDim2.new(0, 10, 0, 120)
+teleportBtn.Position = UDim2.new(0, 10, 0, 100)
 teleportBtn.BackgroundColor3 = Color3.new(0.3, 0.1, 0.1)
 teleportBtn.TextColor3 = Color3.new(1, 1, 1)
 teleportBtn.Font = Enum.Font.GothamBold
