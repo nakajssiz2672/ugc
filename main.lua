@@ -1,8 +1,8 @@
--- Anti-Cheat Bypass Script (Flying + Environmental Detection)
+-- Anti-Cheat Bypass Script (Flying + Environmental Detection + Noclip)
 
 local teleportLocation = Vector3.new(-339.12, 10, 553.27)  -- Your teleport coordinates
-local flySpeed = 10  -- Flying speed
-local teleportDelay = 1  -- Time before flying starts
+local flySpeed = 25  -- Flying speed
+local teleportDelay = 2  -- Time before flying starts
 local player = game.Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 local humanoid = character:WaitForChild("Humanoid")
@@ -26,6 +26,16 @@ local function avoidKillParts()
     while true do
         checkKillParts()
         wait(0.1)  -- Check every 0.1 second
+    end
+end
+
+-- Function to disable collision and make the player noclip through walls
+local function enableNoclip()
+    -- Disable collision for the character's parts to allow noclip
+    for _, part in ipairs(character:GetDescendants()) do
+        if part:IsA("BasePart") then
+            part.CanCollide = false
+        end
     end
 end
 
@@ -54,8 +64,11 @@ local function flyToDestination()
     moveSmoothly(teleportLocation)
 end
 
--- Main function to initiate flying and hazard detection
+-- Main function to initiate flying, noclip, and hazard detection
 local function main()
+    -- Enable noclip so the player can go through walls
+    enableNoclip()
+
     -- Start environmental hazard detection
     spawn(avoidKillParts)
 
