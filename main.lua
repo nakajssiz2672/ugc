@@ -35,6 +35,22 @@ title.TextColor3 = Color3.new(1, 1, 1)
 title.Font = Enum.Font.GothamBold
 title.TextSize = 18
 
+-- Coordinates Display
+local coordLabel = Instance.new("TextLabel", Frame)
+coordLabel.Size = UDim2.new(1, -20, 0, 30)
+coordLabel.Position = UDim2.new(0, 10, 0, 160)
+coordLabel.BackgroundTransparency = 1
+coordLabel.TextColor3 = Color3.new(1, 1, 1)
+coordLabel.Font = Enum.Font.Gotham
+coordLabel.TextSize = 14
+coordLabel.Text = "Coordinates: X: 0 Y: 0 Z: 0"
+
+-- Update the coordinate display in real-time
+game:GetService("RunService").RenderStepped:Connect(function()
+    local position = hrp.Position
+    coordLabel.Text = string.format("Coordinates: X: %.2f Y: %.2f Z: %.2f", position.X, position.Y, position.Z)
+end)
+
 -- WalkSpeed Slider with randomized position
 local speedSlider = Instance.new("TextButton", Frame)
 speedSlider.Text = "Speed: 16"
