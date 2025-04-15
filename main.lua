@@ -94,6 +94,6 @@ teleportBtn.Font = Enum.Font.GothamBold
 teleportBtn.TextSize = 14
 
 teleportBtn.MouseButton1Click:Connect(function()
-    -- Teleporting to the correct finish line coordinates
-    hrp.CFrame = CFrame.new(Vector3.new(-339.12, 50.00, 553.27))
+    -- Teleporting to the correct finish line coordinates with Y = 10.00
+    hrp.CFrame = CFrame.new(Vector3.new(-339.12, 10.00, 553.27))
 end)
