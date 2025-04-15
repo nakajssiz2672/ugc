@@ -1,79 +1,93 @@
--- Anti-Cheat Bypass Script (Flying + Environmental Detection + Noclip)
+-- Initialize the GUI
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+ScreenGui.Name = "FlyAndNoclipGui"
 
-local teleportLocation = Vector3.new(-339.12, 10, 553.27)  -- Your teleport coordinates
-local flySpeed = 50  -- Flying speed
-local teleportDelay = 2  -- Time before flying starts
-local player = game.Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
+local Frame = Instance.new("Frame")
+Frame.Parent = ScreenGui
+Frame.Size = UDim2.new(0, 200, 0, 100)
+Frame.Position = UDim2.new(0, 10, 0, 10)
+
+local FlyButton = Instance.new("TextButton")
+FlyButton.Parent = Frame
+FlyButton.Size = UDim2.new(0, 180, 0, 40)
+FlyButton.Position = UDim2.new(0, 10, 0, 10)
+FlyButton.Text = "Enable Fly"
+FlyButton.TextColor3 = Color3.new(1, 1, 1)
+FlyButton.BackgroundColor3 = Color3.new(0, 0, 1)
+
+local NoclipButton = Instance.new("TextButton")
+NoclipButton.Parent = Frame
+NoclipButton.Size = UDim2.new(0, 180, 0, 40)
+NoclipButton.Position = UDim2.new(0, 10, 0, 60)
+NoclipButton.Text = "Enable Noclip"
+NoclipButton.TextColor3 = Color3.new(1, 1, 1)
+NoclipButton.BackgroundColor3 = Color3.new(0, 1, 0)
+
+local TeleportButton = Instance.new("TextButton")
+TeleportButton.Parent = Frame
+TeleportButton.Size = UDim2.new(0, 180, 0, 40)
+TeleportButton.Position = UDim2.new(0, 10, 0, 110)
+TeleportButton.Text = "Teleport to (-339.12, 10, 553.27)"
+TeleportButton.TextColor3 = Color3.new(1, 1, 1)
+TeleportButton.BackgroundColor3 = Color3.new(1, 0, 0)
+
+-- Fly and Noclip Functions
+local flying = false
+local noclipping = false
+local bodyVelocity = Instance.new("BodyVelocity")
+local character = game.Players.LocalPlayer.Character or game.Players.LocalPlayer.CharacterAdded:Wait()
+local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
 local humanoid = character:WaitForChild("Humanoid")
-local rootPart = character:WaitForChild("HumanoidRootPart")
 
--- Function to detect and avoid environmental hazards like kill parts
-local function avoidKillParts()
-    local function checkKillParts()
-        local region = Region3.new(character.HumanoidRootPart.Position - Vector3.new(2, 2, 2), character.HumanoidRootPart.Position + Vector3.new(2, 2, 2))
-        local partsInRegion = workspace:FindPartsInRegion3(region, character, math.huge)
-
-        for _, part in ipairs(partsInRegion) do
-            if part:IsA("BasePart") and part.Name:match("Kill") then
-                -- Avoid kill part by stopping movement or teleporting
-                humanoid:MoveTo(character.HumanoidRootPart.Position + Vector3.new(5, 0, 0))  -- Move away from the danger
-                break
-            end
-        end
-    end
-
-    while true do
-        checkKillParts()
-        wait(0.1)  -- Check every 0.1 second
+local function toggleFly()
+    if flying then
+        flying = false
+        bodyVelocity:Destroy()
+        FlyButton.Text = "Enable Fly"
+    else
+        flying = true
+        bodyVelocity.MaxForce = Vector3.new(400000, 400000, 400000)
+        bodyVelocity.Velocity = Vector3.new(0, 0, 0)
+        bodyVelocity.Parent = humanoidRootPart
+        FlyButton.Text = "Disable Fly"
     end
 end
 
--- Function to disable collision and make the player noclip through walls
-local function enableNoclip()
-    -- Disable collision for the character's parts to allow noclip
-    for _, part in ipairs(character:GetDescendants()) do
-        if part:IsA("BasePart") then
-            part.CanCollide = false
-        end
+local function toggleNoclip()
+    if noclipping then
+        noclipping = false
+        NoclipButton.Text = "Enable Noclip"
+    else
+        noclipping = true
+        NoclipButton.Text = "Disable Noclip"
     end
 end
 
--- Fly to the target location using BodyVelocity
-local function flyToDestination()
-    -- Create a BodyVelocity to simulate flying
-    local bodyVelocity = Instance.new("BodyVelocity")
-    bodyVelocity.MaxForce = Vector3.new(500000, 500000, 500000)  -- Ensure it has enough force to move
-    bodyVelocity.Velocity = Vector3.new(0, 0, 0)  -- Start with no movement
-    bodyVelocity.Parent = rootPart
-    
-    -- Function to smoothly fly to the destination
-    local function moveSmoothly(targetPosition)
-        local direction = (targetPosition - rootPart.Position).unit
-        while (rootPart.Position - targetPosition).Magnitude > 1 do
-            bodyVelocity.Velocity = direction * flySpeed  -- Fly towards the target with the given speed
-            wait(0.03)  -- Smooth flight update
-        end
-        bodyVelocity:Destroy()  -- Stop flying once the target is reached
+local function teleportToTarget()
+    humanoidRootPart.CFrame = CFrame.new(-339.12, 10, 553.27)
+end
+
+-- Button Connections
+FlyButton.MouseButton1Click:Connect(toggleFly)
+NoclipButton.MouseButton1Click:Connect(toggleNoclip)
+TeleportButton.MouseButton1Click:Connect(teleportToTarget)
+
+-- Noclip Update
+game:GetService("RunService").Heartbeat:Connect(function()
+    if noclipping then
+        humanoidRootPart.CanCollide = false
+    else
+        humanoidRootPart.CanCollide = true
     end
+end)
 
-    -- Wait before starting to fly
-    wait(teleportDelay)
-
-    -- Start flying to the target location
-    moveSmoothly(teleportLocation)
-end
-
--- Main function to initiate flying, noclip, and hazard detection
-local function main()
-    -- Enable noclip so the player can go through walls
-    enableNoclip()
-
-    -- Start environmental hazard detection
-    spawn(avoidKillParts)
-
-    -- Start flying after the delay
-    flyToDestination()
-end
-
-main()
+-- Flying Update
+game:GetService("RunService").Heartbeat:Connect(function()
+    if flying then
+        bodyVelocity.Velocity = Vector3.new(0, humanoidRootPart.Velocity.Y, 0)
+        humanoid.PlatformStand = true
+    else
+        humanoid.PlatformStand = false
+    end
+end)
