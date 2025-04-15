@@ -1,83 +1,97 @@
+-- Anti-detection setup
+local function antiDetection()
+    -- Simple environment check
+    if game:GetService("CoreGui"):FindFirstChild("UGCObbyGui") then
+        game:GetService("CoreGui"):FindFirstChild("UGCObbyGui"):Destroy()
+    end
+end
+
 -- Wait 1 Year for Free UGC - GUI Script
-local player = game.Players.LocalPlayer
-local char = player.Character or player.CharacterAdded:Wait()
-local hrp = char:WaitForChild("HumanoidRootPart")
+local P = game.Players.LocalPlayer
+local C = P.Character or P.CharacterAdded:Wait()
+local H = C:WaitForChild("HumanoidRootPart")
 
 -- UI Setup
-local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
-ScreenGui.Name = "UGCObbyGui"
+local SG = Instance.new("ScreenGui", game.CoreGui)
+SG.Name = "UGCObbyGui"
 
-local Frame = Instance.new("Frame", ScreenGui)
-Frame.Size = UDim2.new(0, 250, 0, 200)
-Frame.Position = UDim2.new(0, 10, 0, 10)
-Frame.BackgroundColor3 = Color3.new(0.15, 0.15, 0.15)
-Frame.BorderSizePixel = 0
+local F = Instance.new("Frame", SG)
+F.Size = UDim2.new(0, 250, 0, 200)
+F.Position = UDim2.new(0, 10, 0, 10)
+F.BackgroundColor3 = Color3.new(0.15, 0.15, 0.15)
+F.BorderSizePixel = 0
 
-local UICorner = Instance.new("UICorner", Frame)
-UICorner.CornerRadius = UDim.new(0, 10)
+local UIC = Instance.new("UICorner", F)
+UIC.CornerRadius = UDim.new(0, 10)
 
-local title = Instance.new("TextLabel", Frame)
-title.Text = "UGC Obby Script"
-title.Size = UDim2.new(1, 0, 0, 30)
-title.BackgroundTransparency = 1
-title.TextColor3 = Color3.new(1, 1, 1)
-title.Font = Enum.Font.GothamBold
-title.TextSize = 18
+local T = Instance.new("TextLabel", F)
+T.Text = "UGC Obby Script"
+T.Size = UDim2.new(1, 0, 0, 30)
+T.BackgroundTransparency = 1
+T.TextColor3 = Color3.new(1, 1, 1)
+T.Font = Enum.Font.GothamBold
+T.TextSize = 18
 
 -- WalkSpeed Slider
-local speedSlider = Instance.new("TextButton", Frame)
-speedSlider.Text = "Speed: 16"
-speedSlider.Size = UDim2.new(1, -20, 0, 30)
-speedSlider.Position = UDim2.new(0, 10, 0, 40)
-speedSlider.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
-speedSlider.TextColor3 = Color3.new(1, 1, 1)
-speedSlider.Font = Enum.Font.Gotham
-speedSlider.TextSize = 14
+local SS = Instance.new("TextButton", F)
+SS.Text = "Speed: 16"
+SS.Size = UDim2.new(1, -20, 0, 30)
+SS.Position = UDim2.new(0, 10, 0, 40)
+SS.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
+SS.TextColor3 = Color3.new(1, 1, 1)
+SS.Font = Enum.Font.Gotham
+SS.TextSize = 14
 
-local speed = 16
-speedSlider.MouseButton1Click:Connect(function()
-    speed = speed + 4
-    if speed > 100 then speed = 16 end
-    player.Character.Humanoid.WalkSpeed = speed
-    speedSlider.Text = "Speed: " .. speed
+local S = 16
+SS.MouseButton1Click:Connect(function()
+    S = S + 4
+    if S > 100 then S = 16 end
+    P.Character.Humanoid.WalkSpeed = S
+    SS.Text = "Speed: " .. S
 end)
 
 -- Infinite Jump Toggle
-local infJump = false
-local infJumpBtn = Instance.new("TextButton", Frame)
-infJumpBtn.Text = "Infinite Jump: OFF"
-infJumpBtn.Size = UDim2.new(1, -20, 0, 30)
-infJumpBtn.Position = UDim2.new(0, 10, 0, 80)
-infJumpBtn.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
-infJumpBtn.TextColor3 = Color3.new(1, 1, 1)
-infJumpBtn.Font = Enum.Font.Gotham
-infJumpBtn.TextSize = 14
+local IJ = false
+local IJB = Instance.new("TextButton", F)
+IJB.Text = "Infinite Jump: OFF"
+IJB.Size = UDim2.new(1, -20, 0, 30)
+IJB.Position = UDim2.new(0, 10, 0, 80)
+IJB.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
+IJB.TextColor3 = Color3.new(1, 1, 1)
+IJB.Font = Enum.Font.Gotham
+IJB.TextSize = 14
 
-infJumpBtn.MouseButton1Click:Connect(function()
-    infJump = not infJump
-    infJumpBtn.Text = "Infinite Jump: " .. (infJump and "ON" or "OFF")
+IJB.MouseButton1Click:Connect(function()
+    IJ = not IJ
+    IJB.Text = "Infinite Jump: " .. (IJ and "ON" or "OFF")
 end)
 
 game:GetService("UserInputService").JumpRequest:Connect(function()
-    if infJump then
-        local char = player.Character
-        if char then
-            char:FindFirstChildOfClass("Humanoid"):ChangeState("Jumping")
+    if IJ then
+        local C = P.Character
+        if C then
+            C:FindFirstChildOfClass("Humanoid"):ChangeState("Jumping")
         end
     end
 end)
 
 -- Teleport to Finish Button
-local teleportBtn = Instance.new("TextButton", Frame)
-teleportBtn.Text = "Teleport to Finish"
-teleportBtn.Size = UDim2.new(1, -20, 0, 30)
-teleportBtn.Position = UDim2.new(0, 10, 0, 120)
-teleportBtn.BackgroundColor3 = Color3.new(0.3, 0.1, 0.1)
-teleportBtn.TextColor3 = Color3.new(1, 1, 1)
-teleportBtn.Font = Enum.Font.GothamBold
-teleportBtn.TextSize = 14
+local TPB = Instance.new("TextButton", F)
+TPB.Text = "Teleport to Finish"
+TPB.Size = UDim2.new(1, -20, 0, 30)
+TPB.Position = UDim2.new(0, 10, 0, 120)
+TPB.BackgroundColor3 = Color3.new(0.3, 0.1, 0.1)
+TPB.TextColor3 = Color3.new(1, 1, 1)
+TPB.Font = Enum.Font.GothamBold
+TPB.TextSize = 14
 
-teleportBtn.MouseButton1Click:Connect(function()
+TPB.MouseButton1Click:Connect(function()
     -- Replace these with actual finish coordinates
-    hrp.CFrame = CFrame.new(Vector3.new(1000, 20, 1000))
+    H.CFrame = CFrame.new(Vector3.new(1000, 20, 1000))
 end)
+
+-- Call anti-detection function periodically
+while true do
+    antiDetection()
+    wait(1)
+end
