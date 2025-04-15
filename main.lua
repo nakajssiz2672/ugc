@@ -1,12 +1,13 @@
 -- Anti-Cheat Bypass Script (Flying + Environmental Detection + Noclip)
 
 local teleportLocation = Vector3.new(-339.12, 10, 553.27)  -- Your teleport coordinates
-local flySpeed = 25  -- Flying speed
-local teleportDelay = 2  -- Time before flying starts
+local flySpeed = 30  -- Flying speed
+local teleportDelay = q  -- Time before flying starts
 local player = game.Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 local humanoid = character:WaitForChild("Humanoid")
 local rootPart = character:WaitForChild("HumanoidRootPart")
+local primaryPart = character:WaitForChild("PrimaryPart")
 
 -- Function to detect and avoid environmental hazards like kill parts
 local function avoidKillParts()
@@ -46,7 +47,7 @@ local function flyToDestination()
     bodyVelocity.MaxForce = Vector3.new(500000, 500000, 500000)  -- Ensure it has enough force to move
     bodyVelocity.Velocity = Vector3.new(0, 0, 0)  -- Start with no movement
     bodyVelocity.Parent = rootPart
-    
+
     -- Function to smoothly fly to the destination
     local function moveSmoothly(targetPosition)
         local direction = (targetPosition - rootPart.Position).unit
