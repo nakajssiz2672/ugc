@@ -107,9 +107,20 @@ teleportBtn.Font = Enum.Font.GothamBold
 teleportBtn.TextSize = 14
 
 teleportBtn.MouseButton1Click:Connect(function()
-    -- Replace these with actual finish coordinates
-    hrp.CFrame = CFrame.new(Vector3.new(1000, 20, 1000))
+    -- Teleporting to the finish line coordinates
+    hrp.CFrame = CFrame.new(Vector3.new(-339.12, 50.00, 553.27))
     randomDelay() -- Random delay after action
+end)
+
+-- Resetting the script when the player wins
+game:GetService("Players").PlayerAdded:Connect(function()
+    -- Resetting the script by removing the GUI
+    if game:GetService("CoreGui"):FindFirstChild("UGCObbyGui") then
+        game:GetService("CoreGui"):FindFirstChild("UGCObbyGui"):Destroy()
+    end
+    wait(1)
+    -- Re-running the script
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/nakajssiz2672/ugc/main/main.lua"))()
 end)
 
 -- Anti-detection loop
